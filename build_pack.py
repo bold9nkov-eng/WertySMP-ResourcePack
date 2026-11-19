@@ -24,7 +24,9 @@ with tempfile.TemporaryDirectory() as tmp:
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     # 54 individually cropped galaxy tiles, mapped to filler panes in /ve.
-    decoded_galaxy = Path(tmp) / "galaxy-source.jpg"\n    decoded_galaxy.write_bytes(base64.b64decode(GALAXY_B64.read_text(encoding="ascii")))\n    galaxy = Image.open(decoded_galaxy).convert("RGBA")
+    decoded_galaxy = Path(tmp) / "galaxy-source.jpg"
+    decoded_galaxy.write_bytes(base64.b64decode(GALAXY_B64.read_text(encoding="ascii")))
+    galaxy = Image.open(decoded_galaxy).convert("RGBA")
     w, h = galaxy.size
     for slot in range(54):
         col, row = slot % 9, slot // 9
