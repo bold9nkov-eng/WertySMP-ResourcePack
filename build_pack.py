@@ -15,8 +15,22 @@ if not BASE.exists() or not GALAXY_B64.exists():
 with tempfile.TemporaryDirectory() as tmp:
     work = Path(tmp) / "pack"
     work.mkdir()
+    # The archived v1.5 source is a wrapper ZIP containing the actual pack ZIP.
+    # Unwrap it before editing, otherwise the final resource pack becomes ZIP-in-ZIP
+    # and Minecraft cannot see pack.mcmeta at the archive root.
     with ZipFile(BASE) as z:
-        z.extractall(work)
+        entries = [n for n in z.namelist() if not n.endswith("/")]
+        nested_zips = [n for n in entries if n.lower().endswith(".zip")]
+        if len(entries) == 1 and len(nested_zips) == 1:
+            inner_path = Path(tmp) / "base-resource-pack.zip"
+            inner_path.write_bytes(z.read(nested_zips[0]))
+            with ZipFile(inner_path) as inner:
+                inner.extractall(work)
+        else:
+            z.extractall(work)
+
+    if not (work / "pack.mcmeta").is_file():
+        raise SystemExit("Invalid base resource pack: pack.mcmeta is not at the pack root")
 
     def write_json(rel, data):
         path = work / rel
