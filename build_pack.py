@@ -7,7 +7,7 @@ import json, shutil, tempfile
 
 ROOT = Path(__file__).resolve().parent
 BASE = ROOT / "VoidMain-ResourcePack-1.21.11-v1.5-CUSTOM-ENCHANT-SOUNDS.zip"
-GALAXY = ROOT / "assets/voidmain/textures/gui/galaxy.png"
+GALAXY = ROOT / "assets/voidmain/textures/gui/galaxy-source.jpg"
 OUT = ROOT / "VoidMain-ResourcePack-1.21.11-v1.6-GALAXY-VE.zip"
 if not BASE.exists() or not GALAXY.exists():
     raise SystemExit("Missing base v1.5 pack or galaxy.png")
