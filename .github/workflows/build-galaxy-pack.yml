@@ -1,0 +1,22 @@
+name: Build VoidMain Galaxy Resource Pack
+on:
+  push:
+    branches: [feature/voidmain-galaxy-ve-ui]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pillow
+      - name: Install audio encoder
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: python build_pack.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VoidMain-ResourcePack-1.21.11-v1.7-COLORED-SCROLLS
+          path: VoidMain-ResourcePack-1.21.11-v1.7-COLORED-SCROLLS.zip
+          if-no-files-found: error
