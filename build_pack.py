@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
-"""Build the VoidMain 1.21.11 resource pack with galaxy GUI tiles and rarity scroll models."""
+"""Build the VoidMain 1.21.11 resource pack with rarity-colored scroll models and sounds."""
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
-from PIL import Image, ImageEnhance, ImageOps
+from PIL import Image, ImageOps
 import json, shutil, tempfile, base64
 
 ROOT = Path(__file__).resolve().parent
 BASE = ROOT / "VoidMain-ResourcePack-1.21.11-v1.5-CUSTOM-ENCHANT-SOUNDS.zip"
-GALAXY_B64 = ROOT / "assets/voidmain/textures/gui/galaxy-source.jpg.b64"
-OUT = ROOT / "VoidMain-ResourcePack-1.21.11-v1.6-GALAXY-VE.zip"
-if not BASE.exists() or not GALAXY_B64.exists():
-    raise SystemExit("Missing base v1.5 pack or galaxy.png")
+
+OUT = ROOT / "VoidMain-ResourcePack-1.21.11-v1.7-COLORED-SCROLLS.zip"
+if not BASE.exists():
+    raise SystemExit("Missing base v1.5 resource pack")
 
 with tempfile.TemporaryDirectory() as tmp:
     work = Path(tmp) / "pack"
@@ -36,29 +36,6 @@ with tempfile.TemporaryDirectory() as tmp:
         path = work / rel
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-
-    # 54 individually cropped galaxy tiles, mapped to filler panes in /ve.
-    decoded_galaxy = Path(tmp) / "galaxy-source.jpg"
-    decoded_galaxy.write_bytes(base64.b64decode(GALAXY_B64.read_text(encoding="ascii")))
-    galaxy = Image.open(decoded_galaxy).convert("RGBA")
-    w, h = galaxy.size
-    for slot in range(54):
-        col, row = slot % 9, slot // 9
-        x0, x1 = round(col*w/9), round((col+1)*w/9)
-        y0, y1 = round(row*h/6), round((row+1)*h/6)
-        tile = galaxy.crop((x0, y0, x1, y1)).resize((32, 32), Image.Resampling.LANCZOS)
-        tile = ImageEnhance.Brightness(tile).enhance(0.82)
-        name = f"gui_galaxy_tile_{slot}"
-        tex = work / f"assets/voidmain/textures/item/gui/{name}.png"
-        tex.parent.mkdir(parents=True, exist_ok=True)
-        tile.save(tex, optimize=True)
-        write_json(f"assets/voidmain/items/{name}.json", {
-            "model": {"type": "minecraft:model", "model": f"voidmain:item/{name}"}
-        })
-        write_json(f"assets/voidmain/models/item/{name}.json", {
-            "parent": "minecraft:item/generated",
-            "textures": {"layer0": f"voidmain:item/gui/{name}"}
-        })
 
     # Six distinct scroll appearances: uncommon, rare, epic, legendary, divine, admin.
     original_path = work / "assets/voidmain/textures/item/enchant_scroll.png"
