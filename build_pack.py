@@ -176,14 +176,15 @@ with tempfile.TemporaryDirectory() as tmp:
         im.save(particle_dir / f"{pname}.png", optimize=True)
 
     readme = work / "VOIDMAIN-CUSTOM-SOUNDS.txt"
-    readme.write_text(
-      "VoidMain custom enchantment sound events (namespace voidmain):\\n" +
-      "\\n".join(f"enchant.{k}" for k in SOUND_SPECS) +
-      "\\n\\nPlay from plugin with: player.playSound(location, \\\"voidmain:enchant.vampirism\\\", volume, 1.0f)\\n" +
-      "Sound files are original procedural synth effects generated during the build.\\n" +
-      "Particle PNGs are visual resources; the Bukkit plugin must emit supported vanilla particles (DUST, CRIT, PORTAL, etc.) to create live effects.\\n",
-      encoding="utf-8"
-    )
+    readme_lines = [
+        "VoidMain custom enchantment sound events (namespace voidmain):",
+        *[f"enchant.{k}" for k in SOUND_SPECS],
+        "",
+        'Play from plugin with: player.playSound(location, "voidmain:enchant.vampirism", volume, 1.0f)',
+        "Sound files are original procedural synth effects generated during the build.",
+        "Particle PNGs are visual resources; the Bukkit plugin must emit supported vanilla particles (DUST, CRIT, PORTAL, etc.) to create live effects."
+    ]
+    readme.write_text("\\n".join(readme_lines) + "\\n", encoding="utf-8")
 
     mcmeta = json.loads((work / "pack.mcmeta").read_text(encoding="utf-8"))
     mcmeta["pack"]["description"] = "VoidMain | Galaxy /ve • 6 Scroll Rarities • Custom Enchant Sounds • 1.21.11"
