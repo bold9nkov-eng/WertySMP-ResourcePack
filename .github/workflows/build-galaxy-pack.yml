@@ -17,6 +17,6 @@ jobs:
       - run: python build_pack.py
       - uses: actions/upload-artifact@v4
         with:
-          name: VoidMain-ResourcePack-1.21.11-v1.6-GALAXY-VE
-          path: VoidMain-ResourcePack-1.21.11-v1.6-GALAXY-VE.zip
+          name: VoidMain-ResourcePack-1.21.11-v1.7-COLORED-SCROLLS
+          path: VoidMain-ResourcePack-1.21.11-v1.7-COLORED-SCROLLS.zip
           if-no-files-found: error
