@@ -3,13 +3,13 @@
 from pathlib import Path
 from zipfile import ZipFile, ZIP_DEFLATED
 from PIL import Image, ImageEnhance, ImageOps
-import json, shutil, tempfile
+import json, shutil, tempfile, base64
 
 ROOT = Path(__file__).resolve().parent
 BASE = ROOT / "VoidMain-ResourcePack-1.21.11-v1.5-CUSTOM-ENCHANT-SOUNDS.zip"
-GALAXY = ROOT / "assets/voidmain/textures/gui/galaxy-source.jpg"
+GALAXY_B64 = ROOT / "assets/voidmain/textures/gui/galaxy-source.jpg.b64"
 OUT = ROOT / "VoidMain-ResourcePack-1.21.11-v1.6-GALAXY-VE.zip"
-if not BASE.exists() or not GALAXY.exists():
+if not BASE.exists() or not GALAXY_B64.exists():
     raise SystemExit("Missing base v1.5 pack or galaxy.png")
 
 with tempfile.TemporaryDirectory() as tmp:
@@ -24,7 +24,7 @@ with tempfile.TemporaryDirectory() as tmp:
         path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     # 54 individually cropped galaxy tiles, mapped to filler panes in /ve.
-    galaxy = Image.open(GALAXY).convert("RGBA")
+    decoded_galaxy = Path(tmp) / "galaxy-source.jpg"\n    decoded_galaxy.write_bytes(base64.b64decode(GALAXY_B64.read_text(encoding="ascii")))\n    galaxy = Image.open(decoded_galaxy).convert("RGBA")
     w, h = galaxy.size
     for slot in range(54):
         col, row = slot % 9, slot // 9
